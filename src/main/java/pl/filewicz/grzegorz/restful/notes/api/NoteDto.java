@@ -6,12 +6,17 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class NoteDto {
     private long id;
-    @NotNull
+    @NotNull(message = "Note field Title cannot be NULL")
     private String title;
-    @NotNull
+    @NotNull(message = "Note field Content cannot be NULL")
     private String content;
 
     public NoteDto() {}
+
+    public NoteDto(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
 
     public NoteDto(long id, String title, String content) {
         this.id = id;
