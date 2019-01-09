@@ -8,7 +8,6 @@ import pl.filewicz.grzegorz.restful.notes.dao.model.Note;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 public class DefaultNoteCrudService implements NoteCrudService {
@@ -24,10 +23,8 @@ public class DefaultNoteCrudService implements NoteCrudService {
 
     @Override
     public Long create(NoteDto noteDto) {
-        Random random = new Random();
         Note note = NoteMapper.toNote(noteDto);
 
-        note.setId(random.nextInt(1000)); // FIXME: remove it!
         note.setCreated(LocalDate.now());
         note.setModified(LocalDate.now());
 
@@ -58,8 +55,6 @@ public class DefaultNoteCrudService implements NoteCrudService {
 
     @Override
     public NoteDto delete(Long noteId) {
-        Note deletedNote = noteCrudDao.delete(noteId);
-
-        return NoteMapper.toDto(deletedNote);
+        return NoteMapper.toDto(noteCrudDao.delete(noteId));
     }
 }

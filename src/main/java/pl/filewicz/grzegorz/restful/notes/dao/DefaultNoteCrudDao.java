@@ -8,6 +8,7 @@ import pl.filewicz.grzegorz.restful.notes.dao.model.Note;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.time.LocalDate;
 import java.util.List;
 
 public class DefaultNoteCrudDao implements NoteCrudDao {
@@ -71,6 +72,10 @@ public class DefaultNoteCrudDao implements NoteCrudDao {
                     builder.and(
                             builder.equal(root.get("id"), noteId),
                             builder.equal(root.get("deleted"), false)
+                    ),
+                    builder.or(
+                            builder.equal(root.get("id"), root.get("originId")),
+                            builder.isNull(root.get("originId"))
                     )
             );
 
@@ -116,6 +121,10 @@ public class DefaultNoteCrudDao implements NoteCrudDao {
             query.select(root).where(
                     builder.and(
                             builder.equal(root.get("deleted"), false)
+                    ),
+                    builder.or(
+                            builder.equal(root.get("id"), root.get("originId")),
+                            builder.isNull(root.get("originId"))
                     )
             );
             notes = session.createQuery(query).getResultList();
@@ -138,7 +147,7 @@ public class DefaultNoteCrudDao implements NoteCrudDao {
     }
 
     public Note update(Note note) {
-        Note updatedNote = null;
+        Note foundNote = null;
 
         // Create a session
         Session session = DefaultNoteHibernateUtil.getSessionFactory().openSession();
@@ -158,17 +167,32 @@ public class DefaultNoteCrudDao implements NoteCrudDao {
                     builder.and(
                             builder.equal(root.get("id"), note.getId()),
                             builder.equal(root.get("deleted"), false)
+                    ),
+                    builder.or(
+                            builder.equal(root.get("id"), root.get("originId")),
+                            builder.isNull(root.get("originId"))
                     )
             );
 
             List<Note> resultList = session.createQuery(query).getResultList();
             if (!resultList.isEmpty()) {
-                updatedNote = resultList.get(0);
-                updatedNote.setTitle(note.getTitle());
-                updatedNote.setContent(note.getContent());
-                updatedNote.setVersion(1);
+                foundNote = resultList.get(0);
 
-                session.saveOrUpdate(updatedNote);
+                // create new version
+                note.setOriginId(note.getId());
+                note.setCreated(foundNote.getCreated());
+                note.setModified(LocalDate.now());
+                note.setVersion(foundNote.getVersion());
+
+                session.save(note);
+
+                // update existing one
+                foundNote.setOriginId(foundNote.getId());
+                foundNote.setTitle(note.getTitle());
+                foundNote.setContent(note.getContent());
+                foundNote.setVersion(foundNote.getVersion() + 1);
+
+                session.saveOrUpdate(foundNote);
             }
 
             // Commit the transaction
@@ -185,7 +209,7 @@ public class DefaultNoteCrudDao implements NoteCrudDao {
             session.close();
         }
 
-        return updatedNote;
+        return foundNote;
     }
 
     public Note delete(Long noteId) {
@@ -208,15 +232,31 @@ public class DefaultNoteCrudDao implements NoteCrudDao {
                     builder.and(
                             builder.equal(root.get("id"), noteId),
                             builder.equal(root.get("deleted"), false)
+                    ),
+                    builder.or(
+                            builder.equal(root.get("id"), root.get("originId")),
+                            builder.isNull(root.get("originId"))
                     )
             );
 
-            List<Note> resultList = session.createQuery(query).getResultList();
-            if (!resultList.isEmpty()) {
-                foundNote = resultList.get(0);
-                foundNote.setDeleted(true);
+            List<Note> resultCurrentNoteList = session.createQuery(query).getResultList();
+            if (!resultCurrentNoteList.isEmpty()) {
+                foundNote = resultCurrentNoteList.get(0);
 
+                // remove current version
+                foundNote.setDeleted(true);
                 session.saveOrUpdate(foundNote);
+
+                // remove history
+                query.select(root).where(builder.equal(root.get("originId"), foundNote.getId()));
+
+                List<Note> resultHistoryNoteList = session.createQuery(query).getResultList();
+                if (!resultHistoryNoteList.isEmpty()) {
+                    for (Note note : resultHistoryNoteList) {
+                        note.setDeleted(true);
+                        session.saveOrUpdate(note);
+                    }
+                }
             }
 
             // Commit the transaction

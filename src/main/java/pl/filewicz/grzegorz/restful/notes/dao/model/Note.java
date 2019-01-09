@@ -14,8 +14,11 @@ import java.util.Objects;
 public class Note implements Serializable {
     @Id
     @GeneratedValue
-    @Column(name = "id")
+    @Column(name = "ID")
     private long id;
+
+    @Column(name = "ORIGIN_ID")
+    private Long originId;
 
     @Column(name = "TITLE", nullable = false)
     private String title;
@@ -54,6 +57,14 @@ public class Note implements Serializable {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public Long getOriginId() {
+        return originId;
+    }
+
+    public void setOriginId(Long originId) {
+        this.originId = originId;
     }
 
     public String getTitle() {
@@ -110,6 +121,7 @@ public class Note implements Serializable {
         if (o == null || getClass() != o.getClass()) return false;
         Note note = (Note) o;
         return id == note.id &&
+                originId == note.originId &&
                 version == note.version &&
                 deleted == note.deleted &&
                 Objects.equals(title, note.title) &&
@@ -120,20 +132,8 @@ public class Note implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, content, created, modified, version, deleted);
+        return Objects.hash(id, originId, title, content, created, modified, version, deleted);
     }
 
-    @Override
-    public String toString() {
-        final StringBuffer sb = new StringBuffer("Note{");
-        sb.append("id=").append(id);
-        sb.append(", title='").append(title).append('\'');
-        sb.append(", content='").append(content).append('\'');
-        sb.append(", created=").append(created);
-        sb.append(", modified=").append(modified);
-        sb.append(", version=").append(version);
-        sb.append(", deleted=").append(deleted);
-        sb.append('}');
-        return sb.toString();
-    }
+
 }
