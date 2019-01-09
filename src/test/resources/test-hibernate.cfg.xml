@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <!-- Create table if not exists -->
+        <property name="hibernate.hbm2ddl.auto">update</property>
+        <!-- The JDBC driver of your database -->
+        <property name="hibernate.connection.driver_class">org.h2.Driver</property>
+        <!-- Indicate the database to generate suitable SQL -->
+        <property name="hibernate.dialect">org.hibernate.dialect.H2Dialect</property>
+        <!-- The JDBC URL to the database instance -->
+        <!-- SERVER: jdbc:h2:tcp://localhost/~/h2database/restful-notes -->
+        <!-- EMBEDDED: jdbc:h2:~/h2database/restful-notes -->
+        <!-- IN MEMORY: jdbc:h2:mem:restful-notes-test -->
+        <property name="hibernate.connection.url">jdbc:h2:mem:restful-notes-test</property>
+        <!-- The database username -->
+        <property name="hibernate.connection.username">sa</property>
+        <!-- The database password -->
+        <property name="hibernate.connection.password" />
+        <!-- Mapping class -->
+        <mapping class="pl.filewicz.grzegorz.restful.notes.dao.model.Note" />
+    </session-factory>
+</hibernate-configuration>
