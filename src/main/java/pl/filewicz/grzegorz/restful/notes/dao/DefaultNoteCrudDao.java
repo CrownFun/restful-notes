@@ -22,9 +22,7 @@ public class DefaultNoteCrudDao implements NoteCrudDao {
         this.noteHibernateUtil = noteHibernateUtil;
     }
 
-    public Long create(Note note) {
-        Long createdNoteId = -1L;
-
+    public Note create(Note note) {
         // Create a session
         Session session = DefaultNoteHibernateUtil.getSessionFactory().openSession();
         Transaction transaction = null;
@@ -33,7 +31,7 @@ public class DefaultNoteCrudDao implements NoteCrudDao {
             // Begin a transaction
             transaction = session.beginTransaction();
             // Save the Note
-            createdNoteId = (Long) session.save(note);
+            session.save(note);
             // Commit the transaction
             transaction.commit();
         } catch (HibernateException e) {
@@ -48,7 +46,7 @@ public class DefaultNoteCrudDao implements NoteCrudDao {
             session.close();
         }
 
-        return createdNoteId;
+        return note;
     }
 
     public Note read(Long noteId) {

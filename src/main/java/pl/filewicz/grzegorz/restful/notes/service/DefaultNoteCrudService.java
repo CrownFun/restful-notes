@@ -22,7 +22,7 @@ public class DefaultNoteCrudService implements NoteCrudService {
     }
 
     @Override
-    public Long create(NoteDto noteDto) {
+    public Note create(NoteDto noteDto) {
         Note note = NoteMapper.toNote(noteDto);
 
         note.setCreated(LocalDate.now());

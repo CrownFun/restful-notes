@@ -135,5 +135,18 @@ public class Note implements Serializable {
         return Objects.hash(id, originId, title, content, created, modified, version, deleted);
     }
 
-
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer("Note{");
+        sb.append("id=").append(id);
+        sb.append(", originId=").append(originId);
+        sb.append(", title='").append(title).append('\'');
+        sb.append(", content='").append(content).append('\'');
+        sb.append(", created=").append(created);
+        sb.append(", modified=").append(modified);
+        sb.append(", version=").append(version);
+        sb.append(", deleted=").append(deleted);
+        sb.append('}');
+        return sb.toString();
+    }
 }

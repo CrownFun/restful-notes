@@ -14,6 +14,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.List;
 
 @Path("/notes")
@@ -31,8 +32,9 @@ public class NoteCrudController {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Long createNote(@Valid NoteDto noteDto) {
-        return noteCrudService.create(noteDto);
+    public Response createNote(@Valid NoteDto noteDto) {
+        return Response.status(Response.Status.CREATED)
+                .entity(noteCrudService.create(noteDto)).build();
     }
 
     @GET
