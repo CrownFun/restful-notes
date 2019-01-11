@@ -13,11 +13,12 @@ WebService responsible for managing and storing in database simple notes
 
 ### Build and run project
 1. Build using Maven - **mvn clean install**
-2. Run Apache Tomcat - **TOMCAT_HOME/bin/startup.sh**
-3. Deploy WebService using Maven Plugin - mvn tomcat7:deploy or mvn tomcat7:redeploy
-4. Test WebService using Postman - **example requests in [Example Usage](#example-usage)**
-5. Test WebService using JUnit tests - **included in project source code**
-6. Check H2Database in file (Server Mode) - **when H2Database is running, click in H2Console "Start Browser"**
+2. Run Apache Tomcat - **TOMCAT_HOME/bin/startup.bat(startup.sh - Linux)**
+3. Make sure that username and password in Your Tomcat Server(conf/tomcat-users.xml) is the same as in POM.xml file
+4. Deploy WebService using Maven Plugin - mvn tomcat7:deploy or mvn tomcat7:redeploy
+5. Test WebService using Postman - **example requests in [Example Usage](#example-usage)**
+6. Test WebService using JUnit tests - **included in project source code**
+7. Check H2Database in file (Server Mode) - **when H2Database is running, click in H2Console "Start Browser"**
 
 ### Example usage
 Postman requests - **included in project source code** - [File](restful-notes.postman_collection.json)
